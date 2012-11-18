@@ -1,0 +1,42 @@
+graphite-carbon (0.9.10-2) unstable; urgency=low
+
+  * Added Japanese translation by victory <victory.deb@gmail.com>
+    (Closes: #692206)
+  * d/control: bumped standards version
+
+ -- Jonas Genannt <jonas.genannt@capi2name.de>  Sun, 18 Nov 2012 13:58:17 +0100
+
+graphite-carbon (0.9.10-1) unstable; urgency=low
+
+  * Adding upstream version 0.9.10.
+  * d/README.source: removed upstream tarball now dfsg compatible
+  * debian/patches/disable_install_opt.patch: refreshed
+  * debian/patches/validate-storage-schemas.debian.patch: refreshed
+
+ -- Jonas Genannt <jonas.genannt@capi2name.de>  Sat, 09 Jun 2012 14:51:01 +0200
+
+graphite-carbon (0.9.9+debian-2) unstable; urgency=low
+
+  [ Christian Perrier ]
+  * Debconf templates and debian/control reviewed by the debian-l10n-
+    english team as part of the Smith review project. Closes: #668706
+  * [Debconf translation updates]
+  * Danish (Joe Hansen).  Closes: #671759
+  * Russian (Yuri Kozlov).  Closes: #672205
+  * French (Julien Patriarca).  Closes: #672217
+  * Polish (Michał Kułach).  Closes: #672741
+  * German (Chris Leick).  Closes: #673076
+  * Spanish; (Omar Campagne).  Closes: #673632
+  * Dutch; (Jeroen Schot).  Closes: #673775
+  * Italian (Beatrice Torracca).  Closes: #673849
+  * Swedish (Martin Bagge / brother).  Closes: #673868
+  * Czech (Michal Simunek).  Closes: #674002
+  * Portuguese (Miguel Figueiredo).  Closes: #674064
+
+ -- Jonas Genannt <jonas.genannt@capi2name.de>  Sun, 27 May 2012 16:00:45 +0200
+
+graphite-carbon (0.9.9+debian-1) unstable; urgency=low
+
+  * Initial release (Closes: #651233)
+
+ -- Jonas Genannt <jonas.genannt@capi2name.de>  Sat, 07 Apr 2012 22:10:31 +0200

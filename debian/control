@@ -1,0 +1,22 @@
+Source: graphite-carbon
+Section: utils
+Priority: optional
+Maintainer: Jonas Genannt <jonas.genannt@capi2name.de>
+Build-Depends: debhelper (>= 8), python-all (>= 2.6.6-3~)
+Standards-Version: 3.9.4
+DM-Upload-Allowed: yes
+Homepage: https://launchpad.net/graphite
+
+Package: graphite-carbon
+Architecture: all
+Depends: adduser,
+         python-twisted-core,
+         python-whisper,
+         ${misc:Depends},
+         ${python:Depends}
+Description: backend data caching and persistence daemon for Graphite
+ Graphite is a web application using the Twisted framework to provide
+ real-time visualization and storage of numeric time-series data.
+ .
+ The Carbon daemon processes the incoming time-series data and saves it
+ as Whisper database files.
