@@ -1,7 +1,8 @@
 Source: graphite-carbon
 Section: utils
 Priority: optional
-Maintainer: Jonas Genannt <jonas.genannt@capi2name.de>
+Maintainer: Debian Graphite Group <pkg-graphite-maint@lists.alioth.debian.org>
+Uploaders: Jonas Genannt <jonas.genannt@capi2name.de>
 Build-Depends: debhelper (>= 8), python-all (>= 2.6.6-3~)
 Standards-Version: 3.9.4
 Homepage: https://launchpad.net/graphite
