@@ -4,7 +4,6 @@ Priority: optional
 Maintainer: Jonas Genannt <jonas.genannt@capi2name.de>
 Build-Depends: debhelper (>= 8), python-all (>= 2.6.6-3~)
 Standards-Version: 3.9.4
-DM-Upload-Allowed: yes
 Homepage: https://launchpad.net/graphite
 
 Package: graphite-carbon
