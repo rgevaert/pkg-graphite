@@ -16,7 +16,7 @@ Author: Jonas Genannt <jonas.genannt@capi2name.de>
    def log_to_dir(self, logdir):
      self.logdir = logdir
 -    self.console_logfile = DailyLogFile('console.log', logdir)
-+    self.console_logfile = LogFile('console.log', logdir, maxRotatedFiles=None rotateLength=None)
++    self.console_logfile = LogFile('console.log', logdir, maxRotatedFiles=None, rotateLength=None)
      self.custom_logs = {}
      self.observer = self.logdir_observer
  
@@ -25,7 +25,7 @@ Author: Jonas Genannt <jonas.genannt@capi2name.de>
  
      if log_type is not None and log_type not in self.custom_logs:
 -      self.custom_logs[log_type] = DailyLogFile(log_type + '.log', self.logdir)
-+      self.custom_logs[log_type] = LogFile(log_type + '.log', self.logdir, maxRotatedFiles=None rotateLength=None)
++      self.custom_logs[log_type] = LogFile(log_type + '.log', self.logdir, maxRotatedFiles=None, rotateLength=None)
  
      logfile = self.custom_logs.get(log_type, self.console_logfile)
      logfile.write(message + '\n')
