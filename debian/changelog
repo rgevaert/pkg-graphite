@@ -3,7 +3,7 @@ graphite-carbon (0.9.10-3) unstable; urgency=low
   * d/postinst: added db_stop to ensure correct restart of carbon daemon (Closes: #696228)
   * Added patch to disable internal logrotation of Carbon (Closes: #696228)
 
- -- Jonas Genannt <jonas.genannt@internetstores.de>  Fri, 18 Jan 2013 15:31:13 +0100
+ -- Jonas Genannt <jonas.genannt@capi2name.de>  Sat, 19 Jan 2013 17:53:15 +0100
 
 graphite-carbon (0.9.10-2) unstable; urgency=low
 
