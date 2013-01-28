@@ -5,9 +5,6 @@
 	compress
 	delaycompress
 	notifempty
-	create 640 _graphite root
 	sharedscripts
-	postrotate
-		/etc/init.d/carbon-cache restart > /dev/null
-	endscript
+	copytruncate
 }
