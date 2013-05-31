@@ -16,6 +16,7 @@ Depends: adduser,
          python-whisper,
          ${misc:Depends},
          ${python:Depends}
+Suggests: graphite-web
 Description: backend data caching and persistence daemon for Graphite
  Graphite is a web application using the Twisted framework to provide
  real-time visualization and storage of numeric time-series data.
