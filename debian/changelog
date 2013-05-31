@@ -1,3 +1,14 @@
+graphite-carbon (0.9.10-4) unstable; urgency=low
+
+  * d/control:Changed Maintainer to Graphite Group
+     - added VCS Fields
+     - removed DM-Upload-Allowed
+     - added suggests graphite-web
+  * d/logroate: changed to copytruncate
+  * d/control: added suggests graphite-web
+
+ -- Jonas Genannt <jonas@brachium-system.net>  Fri, 31 May 2013 21:48:41 +0200
+
 graphite-carbon (0.9.10-3) unstable; urgency=low
 
   * d/postinst: added db_stop to ensure correct restart of carbon
