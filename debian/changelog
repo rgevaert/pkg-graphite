@@ -4,6 +4,7 @@ graphite-carbon (0.9.10-4) unstable; urgency=low
      - added VCS Fields
      - removed DM-Upload-Allowed
      - added suggests graphite-web
+     - changed upstream homepage
   * d/logroate: changed to copytruncate
   * d/control: added suggests graphite-web
 
