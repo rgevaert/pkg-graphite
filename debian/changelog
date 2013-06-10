@@ -1,12 +1,6 @@
-graphite-carbon (0.9.10-4.1) unstable; urgency=low
-
-  * Non-maintainer upload.
-  * gbp.conf: Build to build-area
-
- -- Mathieu Parent <sathieu@debian.org>  Mon, 10 Jun 2013 17:42:55 +0200
-
 graphite-carbon (0.9.10-4) unstable; urgency=low
 
+  [ Jonas Genannt ]
   * d/control:Changed Maintainer to Graphite Group
      - added VCS Fields
      - removed DM-Upload-Allowed
@@ -14,7 +8,11 @@ graphite-carbon (0.9.10-4) unstable; urgency=low
      - changed upstream homepage
   * d/logroate: changed to copytruncate
 
- -- Jonas Genannt <jonas@brachium-system.net>  Fri, 31 May 2013 21:48:41 +0200
+  [ Mathieu Parent ]
+  * gbp.conf: Build to build-area
+  * Add me to Uploaders
+
+ -- Mathieu Parent <sathieu@debian.org>  Mon, 10 Jun 2013 17:44:54 +0200
 
 graphite-carbon (0.9.10-3) unstable; urgency=low
 
