@@ -11,8 +11,9 @@ graphite-carbon (0.9.10-4) unstable; urgency=low
   [ Mathieu Parent ]
   * gbp.conf: Build to build-area
   * Add me to Uploaders
+  * Don't reference /lib/init/vars.sh in carbon-cache init script
 
- -- Mathieu Parent <sathieu@debian.org>  Mon, 10 Jun 2013 17:44:54 +0200
+ -- Mathieu Parent <sathieu@debian.org>  Mon, 10 Jun 2013 17:55:23 +0200
 
 graphite-carbon (0.9.10-3) unstable; urgency=low
 

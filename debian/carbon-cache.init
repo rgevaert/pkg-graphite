@@ -23,8 +23,6 @@ SCRIPTNAME=/etc/init.d/$NAME
 
 [ -r /etc/default/graphite-carbon ] && . /etc/default/graphite-carbon
 
-. /lib/init/vars.sh
-
 . /lib/lsb/init-functions
 
 if [ ! -r /etc/carbon/carbon.conf ]; then
