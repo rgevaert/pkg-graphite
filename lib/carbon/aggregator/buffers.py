@@ -51,7 +51,7 @@ class MetricBuffer:
     self.aggregation_frequency = int(frequency)
     self.aggregation_func = func
     self.compute_task = LoopingCall(self.compute_value)
-    self.compute_task.start(frequency, now=False)
+    self.compute_task.start(settings['WRITE_BACK_FREQUENCY'] or frequency, now=False)
     self.configured = True
 
   def compute_value(self):
@@ -69,6 +69,10 @@ class MetricBuffer:
 
       if buffer.interval < age_threshold:
         del self.interval_buffers[buffer.interval]
+        if not self.interval_buffers:
+          self.close()
+          self.configured = False
+          del BufferManager.buffers[self.metric_path]
 
   def close(self):
     if self.compute_task and self.compute_task.running:

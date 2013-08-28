@@ -23,6 +23,7 @@ from ConfigParser import ConfigParser
 
 import whisper
 from carbon import log
+from carbon.exceptions import CarbonConfigException
 
 from twisted.python import usage
 
@@ -42,11 +43,15 @@ defaults = dict(
   CACHE_QUERY_INTERFACE='0.0.0.0',
   CACHE_QUERY_PORT=7002,
   LOG_UPDATES=True,
+  LOG_CACHE_HITS=True,
+  LOG_CACHE_QUEUE_SORTS=True,
   WHISPER_AUTOFLUSH=False,
   WHISPER_SPARSE_CREATE=False,
+  WHISPER_FALLOCATE_CREATE=False,
   WHISPER_LOCK_WRITES=False,
   MAX_DATAPOINTS_PER_MESSAGE=500,
   MAX_AGGREGATION_INTERVALS=5,
+  FORWARD_ALL=False,
   MAX_QUEUE_SIZE=1000,
   ENABLE_AMQP=False,
   AMQP_VERBOSE=False,
@@ -64,11 +69,12 @@ defaults = dict(
   USE_WHITELIST=False,
   CARBON_METRIC_PREFIX='carbon',
   CARBON_METRIC_INTERVAL=60,
+  CACHE_WRITE_STRATEGY='sorted',
+  WRITE_BACK_FREQUENCY=None,
+  ENABLE_LOGROTATION=True,
+  LOG_LISTENER_CONNECTIONS=True,
 )
 
-
-def _umask(value):
-    return int(value, 8)
 
 def _process_alive(pid):
     if exists("/proc"):
@@ -89,21 +95,24 @@ class OrderedConfigParser(ConfigParser):
   _ordered_sections = []
 
   def read(self, path):
-    result = ConfigParser.read(self, path)
+    # Verifies a file exists *and* is readable
+    if not os.access(path, os.R_OK):
+        raise CarbonConfigException("Error: Missing config file or wrong perms on %s" % path)
 
+    result = ConfigParser.read(self, path)
     sections = []
     for line in open(path):
       line = line.strip()
 
       if line.startswith('[') and line.endswith(']'):
-        sections.append( line[1:-1] )
+        sections.append(line[1:-1])
 
     self._ordered_sections = sections
 
     return result
 
   def sections(self):
-    return list( self._ordered_sections ) # return a copy for safety
+    return list(self._ordered_sections)  # return a copy for safety
 
 
 class Settings(dict):
@@ -116,22 +125,22 @@ class Settings(dict):
   def readFrom(self, path, section):
     parser = ConfigParser()
     if not parser.read(path):
-      raise Exception("Failed to read config file %s" % path)
+      raise CarbonConfigException("Failed to read config file %s" % path)
 
     if not parser.has_section(section):
       return
 
-    for key,value in parser.items(section):
+    for key, value in parser.items(section):
       key = key.upper()
 
       # Detect type from defaults dict
       if key in defaults:
-        valueType = type( defaults[key] )
+        valueType = type(defaults[key])
       else:
         valueType = str
 
       if valueType is list:
-        value = [ v.strip() for v in value.split(',') ]
+        value = [v.strip() for v in value.split(',')]
 
       elif valueType is bool:
         value = parser.getboolean(section, key)
@@ -157,7 +166,7 @@ class CarbonCacheOptions(usage.Options):
 
     optFlags = [
         ["debug", "", "Run in debug mode."],
-        ]
+    ]
 
     optParameters = [
         ["config", "c", None, "Use the given config file."],
@@ -165,7 +174,7 @@ class CarbonCacheOptions(usage.Options):
         ["logdir", "", None, "Write logs to the given directory."],
         ["whitelist", "", None, "List of metric patterns to allow."],
         ["blacklist", "", None, "List of metric patterns to disallow."],
-        ]
+    ]
 
     def postOptions(self):
         global settings
@@ -208,6 +217,12 @@ class CarbonCacheOptions(usage.Options):
             log.msg("Enabling Whisper autoflush")
             whisper.AUTOFLUSH = True
 
+        if settings.WHISPER_FALLOCATE_CREATE:
+            if whisper.CAN_FALLOCATE:
+                log.msg("Enabling Whisper fallocate support")
+            else:
+                log.err("WHISPER_FALLOCATE_CREATE is enabled but linking failed.")
+
         if settings.WHISPER_LOCK_WRITES:
             if whisper.CAN_LOCK:
                 log.msg("Enabling Whisper file locking")
@@ -215,6 +230,12 @@ class CarbonCacheOptions(usage.Options):
             else:
                 log.err("WHISPER_LOCK_WRITES is enabled but import of fcntl module failed.")
 
+        if settings.CACHE_WRITE_STRATEGY not in ('sorted', 'max', 'naive'):
+            log.err("%s is not a valid value for CACHE_WRITE_STRATEGY, defaulting to %s" %
+                    (settings.CACHE_WRITE_STRATEGY, defaults['CACHE_WRITE_STRATEGY']))
+        else:
+            log.msg("Using %s write strategy for cache" %
+                    settings.CACHE_WRITE_STRATEGY)
         if not "action" in self:
             self["action"] = "start"
         self.handleAction()
@@ -351,6 +372,7 @@ class CarbonRelayOptions(CarbonCacheOptions):
 
     optParameters = [
         ["rules", "", None, "Use the given relay rules file."],
+        ["aggregation-rules", "", None, "Use the given aggregation rules file."],
         ] + CarbonCacheOptions.optParameters
 
     def postOptions(self):
@@ -359,9 +381,13 @@ class CarbonRelayOptions(CarbonCacheOptions):
             self["rules"] = join(settings["CONF_DIR"], "relay-rules.conf")
         settings["relay-rules"] = self["rules"]
 
-        if settings["RELAY_METHOD"] not in ("rules", "consistent-hashing"):
+        if self["aggregation-rules"] is None:
+          self["aggregation-rules"] = join(settings["CONF_DIR"], "aggregation-rules.conf")
+        settings["aggregation-rules"] = self["aggregation-rules"]
+
+        if settings["RELAY_METHOD"] not in ("rules", "consistent-hashing", "aggregated-consistent-hashing"):
             print ("In carbon.conf, RELAY_METHOD must be either 'rules' or "
-                   "'consistent-hashing'. Invalid value: '%s'" %
+                   "'consistent-hashing' or 'aggregated-consistent-hashing'. Invalid value: '%s'" %
                    settings.RELAY_METHOD)
             sys.exit(1)
 
@@ -378,6 +404,9 @@ def get_default_parser(usage="%prog [options] <start|stop|status>"):
     parser.add_option(
         "--pidfile", default=None,
         help="Write pid to the given file")
+    parser.add_option(
+        "--umask", default=None,
+        help="Use the given umask when creating files")
     parser.add_option(
         "--config",
         default=None,
@@ -455,7 +484,7 @@ def read_config(program, options, **kwargs):
     if graphite_root is None:
         graphite_root = os.environ.get('GRAPHITE_ROOT')
     if graphite_root is None:
-        raise ValueError("Either ROOT_DIR or GRAPHITE_ROOT "
+        raise CarbonConfigException("Either ROOT_DIR or GRAPHITE_ROOT "
                          "needs to be provided.")
 
     # Default config directory to root-relative, unless overriden by the
@@ -492,7 +521,7 @@ def read_config(program, options, **kwargs):
     config = options["config"]
 
     if not exists(config):
-        raise ValueError("Error: missing required config %r" % config)
+        raise CarbonConfigException("Error: missing required config %r" % config)
 
     settings.readFrom(config, section)
     settings.setdefault("instance", options["instance"])
@@ -509,7 +538,7 @@ def read_config(program, options, **kwargs):
                  (program, options["instance"])))
         settings["LOG_DIR"] = (options["logdir"] or
                               join(settings["LOG_DIR"],
-                                "%s-%s" % (program ,options["instance"])))
+                                "%s-%s" % (program, options["instance"])))
     else:
         settings["pidfile"] = (
             options["pidfile"] or
