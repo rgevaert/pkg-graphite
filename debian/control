@@ -14,7 +14,7 @@ Package: graphite-carbon
 Architecture: all
 Depends: adduser,
          python-twisted-core,
-         python-whisper,
+         python-whisper (>= 0.9.12~),
          ${misc:Depends},
          ${python:Depends}
 Suggests: graphite-web
