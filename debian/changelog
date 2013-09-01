@@ -1,3 +1,12 @@
+graphite-carbon (0.9.12-1) unstable; urgency=low
+
+  * New Upstream Version
+  * refreshed patch carbon.conf.debian.patch (disabled also internal logrotate)
+  * removed patch to disable internal logrotate
+  * d/control: added version depend on python-whisper
+
+ -- Jonas Genannt <jonas.genannt@capi2name.de>  Sun, 01 Sep 2013 12:28:20 +0200
+
 graphite-carbon (0.9.10-4) unstable; urgency=low
 
   [ Jonas Genannt ]
