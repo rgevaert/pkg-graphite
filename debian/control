@@ -5,7 +5,7 @@ Maintainer: Debian Graphite Group <pkg-graphite-maint@lists.alioth.debian.org>
 Uploaders: Jonas Genannt <jonas.genannt@capi2name.de>,
  Mathieu Parent <sathieu@debian.org>
 Build-Depends: debhelper (>= 8), python-all (>= 2.6.6-3~), dh-systemd (>= 1.5)
-Standards-Version: 3.9.4
+Standards-Version: 3.9.5
 Homepage: https://github.com/graphite-project/carbon
 Vcs-Git: git://anonscm.debian.org//pkg-graphite/packages/graphite-carbon.git
 Vcs-Browser: http://anonscm.debian.org/gitweb?p=pkg-graphite/packages/graphite-carbon.git;a=summary
