@@ -1,3 +1,12 @@
+graphite-carbon (0.9.12-2) unstable; urgency=medium
+
+  * added systemd service file: carbon-cache.service
+  * added twisted_daemonize patch to work with newer Python Twisted
+    (Closes: #735220)
+  * d/control: bumped standards version to 3.9.5 (no changes needed)
+
+ -- Jonas Genannt <jonas.genannt@capi2name.de>  Mon, 13 Jan 2014 22:42:24 +0100
+
 graphite-carbon (0.9.12-1) unstable; urgency=low
 
   * New Upstream Version
