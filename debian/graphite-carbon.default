@@ -1,2 +1,6 @@
 # Change to true, to enable carbon-cache on boot
 CARBON_CACHE_ENABLED=false
+
+# Add a space seperated list of theidentifiers of your different
+# carbon-cache instances, and uncomment
+#INSTANCES="a b"
