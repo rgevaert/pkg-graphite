@@ -1,4 +1,4 @@
-/var/log/carbon/*.log {
+/var/log/carbon/*.log /var/log/carbon/*/*.log {
 	weekly
 	missingok
 	rotate 7

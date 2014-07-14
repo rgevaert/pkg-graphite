@@ -1,0 +1,6 @@
+# Change to true, to enable carbon-aggregator on boot
+CARBON_AGGREGATOR_ENABLED=false
+
+# Add a space seperated list of the identifiers of your different
+# carbon-aggregator instances, and uncomment
+#INSTANCES="a b"

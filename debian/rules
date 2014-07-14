@@ -10,6 +10,8 @@ override_dh_install:
 	rm -rf debian/graphite-carbon/usr/storage
 	# install global default file for the three carbon daemons
 	cp debian/graphite-carbon.default debian/graphite-carbon/etc/default/graphite-carbon
+	cp debian/graphite-relay.default debian/graphite-carbon/etc/default/graphite-relay
+	cp debian/graphite-aggregator.default debian/graphite-carbon/etc/default/graphite-aggregator
 	# install config files
 	cp conf/carbon.conf.example debian/graphite-carbon/etc/carbon/carbon.conf
 	cp conf/storage-schemas.conf.example debian/graphite-carbon/etc/carbon/storage-schemas.conf
@@ -17,8 +19,12 @@ override_dh_install:
 
 override_dh_installinit:
 	dh_installinit --name=carbon-cache
+	dh_installinit --name=carbon-relay
+	dh_installinit --name=carbon-aggregator
 
 override_dh_systemd_start:
+	dh_systemd_start --name=carbon-cache
+	dh_systemd_start --name=carbon-relay
 	dh_systemd_start --name=carbon-cache
 
 override_dh_systemd_enable:
